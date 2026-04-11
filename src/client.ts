@@ -60,7 +60,7 @@ yargs(hideBin(process.argv))
   }, (argv) => {
     const client = net.connect({port: 60300});
     const request: RequestType = { user: argv.user, type: 'add', videogame: buildGameFromArgv(argv) };
-    client.write(JSON.stringify(request));
+    client.end(JSON.stringify(request));
 
     let wholeData: string = '';
     client.on('data', (chunk) => {
@@ -88,7 +88,7 @@ yargs(hideBin(process.argv))
   }, (argv) => {
     const client = net.connect({port: 60300});
     const request: RequestType = { user: argv.user, type: 'update', videogame: buildGameFromArgv(argv) };
-    client.write(JSON.stringify(request));
+    client.end(JSON.stringify(request));
 
     let wholeData: string = '';
     client.on('data', (chunk) => {
@@ -107,7 +107,7 @@ yargs(hideBin(process.argv))
   }, (argv) => {
     const client = net.connect({port: 60300});
     const request: RequestType = { user: argv.user, type: 'remove', id: argv.id };
-    client.write(JSON.stringify(request));
+    client.end(JSON.stringify(request));
 
     let wholeData: string = '';
     client.on('data', (chunk) => {
@@ -125,7 +125,7 @@ yargs(hideBin(process.argv))
   }, (argv) => {
     const client = net.connect({port: 60300});
     const request: RequestType = { user: argv.user, type: 'list' };
-    client.write(JSON.stringify(request));
+    client.end(JSON.stringify(request));
 
     let wholeData: string = '';
     client.on('data', (chunk) => {
@@ -137,6 +137,7 @@ yargs(hideBin(process.argv))
       if (!response.success) { 
         console.log(response.message); 
       } else if (response.videogames) {
+        console.log(`${argv.user} videogame collection`);
         const list: Videogame[] = response.videogames;
         list.forEach(item => {
           console.log('--------------------------------');
@@ -152,7 +153,7 @@ yargs(hideBin(process.argv))
   }, (argv) => {
     const client = net.connect({port: 60300});
     const request: RequestType = {user: argv.user, type: 'read', id: argv.id};
-    client.write(JSON.stringify(request));
+    client.end(JSON.stringify(request));
 
     let wholeData: string = '';
     client.on('data', (chunk) => {

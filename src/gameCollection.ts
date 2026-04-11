@@ -2,7 +2,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 import { Videogame } from './videogame.js';
 
-type Callback = (err: boolean, result?: string | Videogame[]) => void;
+type Callback = (success: boolean, result?: string | Videogame[]) => void;
 
 /**
  * Clase que gestiona el almacenamiento, lectura y modificación de la colección de videojuegos de un usuario.
@@ -18,7 +18,7 @@ export class GameCollection {
   constructor(private user: string) {
     this.userPath = "./db/" + user; 
     if (!fs.existsSync(this.userPath)) {
-      fs.mkdir(this.userPath, { recursive: true }, () => {});
+      fs.mkdirSync(this.userPath, { recursive: true });
     }
   }
 
@@ -42,8 +42,12 @@ export class GameCollection {
       return;
     }
 
-    fs.writeFile(filePath, JSON.stringify(game, null, 2), () => {
-      callback(true, chalk.green(`New videogame added to ${this.user} collection!`));
+    fs.writeFile(filePath, JSON.stringify(game, null, 2), (err) => {
+      if (err) {
+        callback(false, chalk.red('Error writing file'));
+      } else {
+        callback(true, chalk.green(`New videogame added to ${this.user} collection!`));
+      }
     });
   }
 
@@ -99,10 +103,8 @@ export class GameCollection {
    * @param user - Nombre del usuario a listar.
    */
   public listGames(user: string, callback: Callback) {
-    console.log(`${user} videogame collection`);
-
     fs.readdir(this.userPath, (err, files) => {
-      if (files.length === 0) {
+      if (err || !files || files.length === 0) {
         callback(false, chalk.red(`${this.user} collection is empty!`));
         return;
       }
@@ -113,9 +115,7 @@ export class GameCollection {
         const filePath: string = this.userPath + "/" + file;
         fs.readFile(filePath, (err, gameData) => {
           if (!err) { list.push(JSON.parse(gameData.toString())); }
-          ++counter;
-          
-          if (counter === files.length) { callback(true, list); }
+          if (++counter === files.length) { callback(true, list); }
         });
       });
     });

@@ -18,55 +18,55 @@ export type ResponseType = {
 const server = net.createServer((connection) => {
   console.log('A client has connected.');
 
-  connection.on('data', (dataJSON) => {
-    const message: RequestType = JSON.parse(dataJSON.toString());
+  let requestData: string = '';
+  connection.on('data', (chunk) => {
+    requestData += chunk.toString();
+  });
+
+  connection.on('end', () => {
+    const message: RequestType = JSON.parse(requestData);
     const userGameCollection = new GameCollection(message.user);
 
     if (message.type === 'add') {
-      userGameCollection.addGame(message.videogame as Videogame, (err, result) => {
-        const response: ResponseType = { success: err, message: result as string};
-        connection.write(JSON.stringify(response));
-        connection.end();
+      userGameCollection.addGame(message.videogame as Videogame, (success, result) => {
+        const response: ResponseType = { success: success, message: result as string};
+        connection.end(JSON.stringify(response));
       }); 
     } else if (message.type === 'update') {
-      userGameCollection.updateGame(message.videogame as Videogame, (err, result) => {
-        const response: ResponseType = { success: err, message: result as string};
-        connection.write(JSON.stringify(response));
-        connection.end();
+      userGameCollection.updateGame(message.videogame as Videogame, (success, result) => {
+        const response: ResponseType = { success: success, message: result as string};
+        connection.end(JSON.stringify(response));
       });
     } else if (message.type === 'remove') {
-      userGameCollection.removeGame(message.id as number, (err, result) => {
-        const response: ResponseType = { success: err, message: result as string};
-        connection.write(JSON.stringify(response));
-        connection.end();
+      userGameCollection.removeGame(message.id as number, (success, result) => {
+        const response: ResponseType = { success: success, message: result as string};
+        connection.end(JSON.stringify(response));
       });
     } else if (message.type === 'read') {
-      userGameCollection.readGame(message.id as number, (err, result) => {
-        if (!err) {
-          const response: ResponseType = { success: err, message: result as string};
-          connection.write(JSON.stringify(response));
+      userGameCollection.readGame(message.id as number, (success, result) => {
+        if (!success) {
+          const response: ResponseType = { success: success, message: result as string};
+          connection.end(JSON.stringify(response));
         } else {
-          const response: ResponseType = { success: err, videogames: result as Videogame[]};
-          connection.write(JSON.stringify(response));
+          const response: ResponseType = { success: success, videogames: result as Videogame[]};
+          connection.end(JSON.stringify(response));
         }
-        connection.end();
       });
     } else {
-      userGameCollection.listGames(message.user, (err, result) => {
-        if (!err) {
-          const response: ResponseType = { success: err, message: result as string};
-          connection.write(JSON.stringify(response));
+      userGameCollection.listGames(message.user, (success, result) => {
+        if (!success) {
+          const response: ResponseType = { success: success, message: result as string};
+          connection.end(JSON.stringify(response));
         } else {
-          const response: ResponseType = { success: err, videogames: result as Videogame[]};
-          connection.write(JSON.stringify(response));
+          const response: ResponseType = { success: success, videogames: result as Videogame[]};
+          connection.end(JSON.stringify(response));
         }
-        connection.end();
       });
     }
   });
 
   connection.on('close', () => {
-    console.log('A client has disconnected');
+    console.log('A client has disconnected.');
   });
 });
 
