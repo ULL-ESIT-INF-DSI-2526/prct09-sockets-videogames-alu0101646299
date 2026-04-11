@@ -93,7 +93,7 @@ export class GameCollection {
       if (err) {
         callback(false, chalk.red(`Videogame not found at ${this.user} collection!`));
       } else {
-        callback(true, JSON.parse(gameData.toString()));
+        callback(true, [JSON.parse(gameData.toString())]);
       }
     });
   }

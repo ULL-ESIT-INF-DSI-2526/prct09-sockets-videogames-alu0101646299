@@ -45,6 +45,7 @@ function buildGameFromArgv(argv: GameCommandArgs): Videogame {
 }
 
 yargs(hideBin(process.argv))
+  // Comando add
   .command('add', 'Adds a videogame', {
     user: { type: 'string', demandOption: true },
     id: { type: 'number', demandOption: true },
@@ -73,6 +74,7 @@ yargs(hideBin(process.argv))
     );
   })
 
+  // Comando update
   .command('update', 'Updates a videogame', {
     user: { type: 'string', demandOption: true },
     id: { type: 'number', demandOption: true },
@@ -101,6 +103,7 @@ yargs(hideBin(process.argv))
     );
   })
 
+  // Commando remove
   .command('remove', 'Removes a videogame', {
     user: { type: 'string', demandOption: true },
     id: { type: 'number', demandOption: true }
@@ -120,6 +123,7 @@ yargs(hideBin(process.argv))
     );
   })
 
+  // Comando list
   .command('list', 'Lists all videogames', {
     user: { type: 'string', demandOption: true }
   }, (argv) => {
@@ -147,6 +151,7 @@ yargs(hideBin(process.argv))
     });
   })
 
+  // Comando read
   .command('read', 'Reads a specific videogame', {
     user: { type: 'string', demandOption: true },
     id: { type: 'number', demandOption: true }

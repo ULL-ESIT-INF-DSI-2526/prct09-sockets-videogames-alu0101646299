@@ -15,7 +15,7 @@ export type ResponseType = {
   videogames?: Videogame[];
 }
 
-const server = net.createServer((connection) => {
+const server = net.createServer({ allowHalfOpen: true }, (connection) => {
   console.log('A client has connected.');
 
   let requestData: string = '';
@@ -29,36 +29,36 @@ const server = net.createServer((connection) => {
 
     if (message.type === 'add') {
       userGameCollection.addGame(message.videogame as Videogame, (success, result) => {
-        const response: ResponseType = { success: success, message: result as string};
+        const response: ResponseType = { success: success, message: result as string };
         connection.end(JSON.stringify(response));
       }); 
     } else if (message.type === 'update') {
       userGameCollection.updateGame(message.videogame as Videogame, (success, result) => {
-        const response: ResponseType = { success: success, message: result as string};
+        const response: ResponseType = { success: success, message: result as string };
         connection.end(JSON.stringify(response));
       });
     } else if (message.type === 'remove') {
       userGameCollection.removeGame(message.id as number, (success, result) => {
-        const response: ResponseType = { success: success, message: result as string};
+        const response: ResponseType = { success: success, message: result as string };
         connection.end(JSON.stringify(response));
       });
     } else if (message.type === 'read') {
       userGameCollection.readGame(message.id as number, (success, result) => {
         if (!success) {
-          const response: ResponseType = { success: success, message: result as string};
+          const response: ResponseType = { success: success, message: result as string };
           connection.end(JSON.stringify(response));
         } else {
-          const response: ResponseType = { success: success, videogames: result as Videogame[]};
+          const response: ResponseType = { success: success, videogames: result as Videogame[] };
           connection.end(JSON.stringify(response));
         }
       });
     } else {
       userGameCollection.listGames(message.user, (success, result) => {
         if (!success) {
-          const response: ResponseType = { success: success, message: result as string};
+          const response: ResponseType = { success: success, message: result as string };
           connection.end(JSON.stringify(response));
         } else {
-          const response: ResponseType = { success: success, videogames: result as Videogame[]};
+          const response: ResponseType = { success: success, videogames: result as Videogame[] };
           connection.end(JSON.stringify(response));
         }
       });
