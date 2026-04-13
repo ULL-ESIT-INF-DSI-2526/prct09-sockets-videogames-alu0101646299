@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"node dist/server.js\"",
+    "dev": "tsc-watch --onSuccess \"node dist/ejercicio_modf/checkWeather.js\"",
     "doc": "typedoc",
     "test": "vitest run",
-    "coverage": "vitest run --coverage --coverage.include \"src/**\" --coverage.exclude \"src/videogames-app.ts\""
+    "coverage": "vitest run --coverage --coverage.include \"src/**\""
   },
   "keywords": [],
   "author": "",
